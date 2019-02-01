@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+  - "3.5"
+install:
+  - pip install pep8
+#   - cd spi_serial ; pip install -r requirements.txt
+script:
+  # - cd spi_serial ; nosetests
+  - pep8 .
+notifications:
+  email:
+    - morgan@enhancedradio.com

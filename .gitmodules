@@ -1,0 +1,6 @@
+[submodule "pyHamShield/clib"]
+	path = pyHamShield/clib
+	url = https://github.com/EnhancedRadioDevices/HamShield.git
+[submodule "HamShieldPy/clib"]
+	path = HamShieldPy/clib
+	url = https://github.com/EnhancedRadioDevices/HamShield.git
