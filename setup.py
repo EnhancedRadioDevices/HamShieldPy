@@ -5,7 +5,7 @@ from setuptools import setup
 from distutils.core import Extension
 
 extension_mod = Extension("_HamShieldPy", 
-		sources = ["_HamShieldPy_module.cc", "HamShieldPy/clib/src/HamShield.cpp", "HamShieldPy/clib/src/HamShield_comms.cpp"],
+		sources = ["HamShieldPy/_HamShieldPy_module.cc", "HamShieldPy/clib/src/HamShield.cpp", "HamShieldPy/clib/src/HamShield_comms.cpp"],
 		include_dirs = ["HamShieldPy", "HamShieldPy/clib/src"],
 		libraries = ["pthread", "wiringPi"])
 
