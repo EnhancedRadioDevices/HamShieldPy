@@ -45,9 +45,9 @@ def char2code(c) {
         code = 0xF
     elif (c=='*'):
         code = 0xE
-    elif (c >= 'A' && c <= 'D'):
+    elif (c >= 'A' and c <= 'D'):
         code = c - 'A' + 0xA
-    elif (c >= '0' && c <= '9'):
+    elif (c >= '0' and c <= '9'):
         code = c - '0'
     else:
         # invalid code, skip it
