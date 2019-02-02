@@ -26,7 +26,7 @@
 # CLK               pin 15(GPIO22)
 # MIC               pin 12(GPIO18, PWM0)
 
-import pyHamShield
+from HamShieldPy import HamShield
 import wiringpi
 
 nCS = 17
@@ -34,7 +34,7 @@ clk = 22
 dat = 27
 mic = 18
 # create object for radio
-HamShield radio(nCS, clk, dat, mic)
+radio = HamShield(nCS, clk, dat, mic)
 
 
 # sketch functions
