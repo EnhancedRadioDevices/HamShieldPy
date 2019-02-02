@@ -17,9 +17,9 @@ LICENSE.txt for more details.
 
 # Pre-Requisites
 
-* wiringPi C http://wiringpi.com/
+* wiringPi http://wiringpi.com/
 * wiringPi python
-* SWIG
+* SWIG (this should be installed with your default Raspbian image)
 
 # Setup
 
@@ -29,6 +29,7 @@ On your Raspberry Pi, run the following after connecting it to the internet:
     mkdir ~/src
     cd ~/src
     git clone https://github.com/EnhancedRadioDevices/HamShieldPy.git
+    git submodule update --init
     cd HamShieldPy
     make
 

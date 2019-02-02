@@ -4,7 +4,10 @@ from setuptools import setup
 #from distutils.core import setup, Extension
 from distutils.core import Extension
 
-extension_mod = Extension("_HamShieldPy", ["_HamShieldPy_module.cc", "HamShieldPy/clib/src/HamShield.cpp", "HamShieldPy/HamShield_pi_comms.cpp"])
+extension_mod = Extension("_HamShieldPy", 
+		sources = ["_HamShieldPy_module.cc", "HamShieldPy/clib/src/HamShield.cpp", "HamShieldPy/HamShield_pi_comms.cpp"],
+		include_dirs = ["HamShieldPy", "HamShieldPy/clib/src"],
+		libraries = ["pthread", "wiringPi"])
 
 #TODO: may want to run make from here
 
@@ -16,5 +19,4 @@ setup(name="HamShieldPy",
       author_email="morgan@enhancedradio.com",
       packages=["HamShieldPy"],
       ext_modules=[extension_mod]
-      scripts=[]
       )

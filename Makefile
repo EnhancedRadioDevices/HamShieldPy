@@ -6,5 +6,5 @@ PYLIB := HamShieldPy/
 INCLUDES := -I$(CLIB)
 
 all:
-    swig -python -c++ -o $(CLIB)/HamShield.cpp $(PYLIB)/HamShield_pi_comms.cpp HamShieldPy.i $(INCLUDES) -lwiringPi -lpthread
-    python setup.py install
+	swig -python -c++ -o _HamShieldPy_module.cc $(INCLUDES) $(PYLIB)HamShieldPy.i 
+	python setup.py install
