@@ -130,7 +130,7 @@ def setup():
       
     # if you're using a standard HamShield (not a Mini)
     # you have to let it out of reset
-    #RESET_PIN = 5
+    #RESET_PIN = 21
     #wiringPi.pinMode(RESET_PIN, OUTPUT)
     #wiringPi.digitalWrite(RESET_PIN, HIGH)
     #wiringPi.delay(5) # wait for device to come up

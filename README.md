@@ -44,11 +44,11 @@ You can find all the examples in the Examples directory. They all assume that yo
     HamShieldMini <-> Raspberry Pi
     Vin               pin 1 (3.3V)
     GND               pin 6 (GND)
-    nCS               pin 11(GPIO17)
-    DAT               pin 13(GPIO27)
-    CLK               pin 15(GPIO22)
-    MIC               pin 12(GPIO18, PWM0)
+    nCS               pin 11(wiringPi0)
+    DAT               pin 13(wiringPi2)
+    CLK               pin 15(wiringPi3)
+    MIC               pin 12(wiringPi1, PWM0)
     
 If you're using a HamShield, you'll also want to connect the HamShield's reset line. The examples all have some commented out code in the setup function that will bring the HamShield out of reset.
 
-    RST               pin (GPIO5)
+    RST               pin 29(wiringPi21)
