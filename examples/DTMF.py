@@ -28,6 +28,7 @@
 
 from HamShieldPy import HamShield
 import wiringpi
+import threading
 
 nCS = 17
 clk = 22
@@ -40,7 +41,7 @@ radio = HamShield(nCS, clk, dat, mic)
 # sketch functions
 
 
-def char2code(c) {
+def char2code(c):
     if (c == '#'):
         code = 0xF
     elif (c=='*'):
@@ -89,7 +90,7 @@ class StdinParser(threading.Thread):
                 else:
                     inputBuffer += instruction
                 bufferLock.release()
-            except EOFError:
+            except EOFError, KeyboardInterrupt:
                 running = False
 
 
@@ -125,15 +126,16 @@ def setup():
 
     print("press any key to begin...")
       
-    while (not inputAvailable())
+    while (not inputAvailable()):
+        pass
     inputFlush()
       
     # if you're using a standard HamShield (not a Mini)
     # you have to let it out of reset
     #RESET_PIN = 21
-    #wiringPi.pinMode(RESET_PIN, OUTPUT)
-    #wiringPi.digitalWrite(RESET_PIN, HIGH)
-    #wiringPi.delay(5) # wait for device to come up
+    #wiringpi.pinMode(RESET_PIN, OUTPUT)
+    #wiringpi.digitalWrite(RESET_PIN, HIGH)
+    #wiringpi.delay(5) # wait for device to come up
       
     print("beginning radio setup")
 
@@ -141,7 +143,7 @@ def setup():
     print("Testing device connections...")
     if (radio.testConnection()):
         print("HamShield connection successful")
-    else
+    else:
         print("HamShield connection failed")
 
 
@@ -153,8 +155,8 @@ def setup():
     print("setting squelch")
     radio.setSQHiThresh(-10)
     radio.setSQLoThresh(-30)
-    print("sq hi: " + str(radio.getSQHiThresh())
-    print("sq lo: " + str(radio.getSQLoThresh())
+    print("sq hi: " + str(radio.getSQHiThresh()))
+    print("sq lo: " + str(radio.getSQLoThresh()))
     radio.setSQOn()
     #radio.setSQOff()
 
@@ -198,32 +200,32 @@ def loop():
         j = 0
         while (j < 4):
             if (radio.getDTMFSample() == 0):
-                j++
-            delay(10)
-    else if (len(rx_dtmf_buf) > 0):
+                j += 1
+            wiringpi.delay(10)
+    elif (len(rx_dtmf_buf) > 0):
         print(rx_dtmf_buf)
   
     # Is it time to send tone?
-    if (inputAvailable()) {
+    if (inputAvailable()):
         code = char2code(inputReadChar())
     
         # start transmitting
         radio.setDTMFCode(code) # set first
         radio.setTxSourceTones()
         radio.setModeTransmit()
-        delay(300) # wait for TX to come to full power
+        wiringpi.delay(300) # wait for TX to come to full power
 
         dtmf_to_tx = True
         while (dtmf_to_tx):
             # wait until ready
             while (radio.getDTMFTxActive() != 1):
                 # wait until we're ready for a new code
-                delay(10)
+                wiringpi.delay(10)
             while (radio.getDTMFTxActive() != 0):
                 # wait until this code is done
-                delay(10)
+                wiringpi.delay(10)
 
-            if (inputAvailable()) {
+            if (inputAvailable()):
                 code = char2code(inputReadChar())
                 if (code == 255): code = 0xE # throw a * in there so we don't break things with an invalid code
                 radio.setDTMFCode(code) # set first
@@ -236,7 +238,7 @@ def loop():
 
 if __name__ == '__main__':   
 
-    wiringPi.wiringPiSetupGpio()
+    wiringpi.wiringPiSetupGpio()
  
     inputThread=StdinParser()
     inputThread.start()
@@ -249,7 +251,7 @@ if __name__ == '__main__':
         try:
             loop()
         except:
-            BufferLock.acquire()
+            bufferLock.acquire()
             inputBuffer = False
-            BufferLock.release()
+            bufferLock.release()
             break

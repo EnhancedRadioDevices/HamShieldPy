@@ -17,8 +17,10 @@ LICENSE.txt for more details.
 
 # Pre-Requisites
 
-* wiringPi http://wiringpi.com/
+* wiringPi
+    http://wiringpi.com/
 * wiringPi python
+    pip install wiringpi2
 * SWIG (this should be installed with your default Raspbian image)
 
 # Setup
