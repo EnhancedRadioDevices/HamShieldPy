@@ -21,10 +21,10 @@
 # HamShieldMini <-> Raspberry Pi
 # Vin               pin 1 (3.3V)
 # GND               pin 6 (GND)
-# nCS               pin 11(GPIO17)
-# DAT               pin 13(GPIO27)
-# CLK               pin 15(GPIO22)
-# MIC               pin 12(GPIO18, PWM0)
+# nCS               pin 11
+# DAT               pin 13
+# CLK               pin 15
+# MIC               pin 12
 
 from HamShieldPy import HamShield
 import wiringpi
