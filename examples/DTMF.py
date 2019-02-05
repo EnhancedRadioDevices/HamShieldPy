@@ -30,12 +30,13 @@ from HamShieldPy import HamShield
 import wiringpi
 import threading
 
-nCS = 17
-clk = 22
-dat = 27
-mic = 18
+nCS = 0
+clk = 3
+dat = 2
+mic = 1
 # create object for radio
 radio = HamShield(nCS, clk, dat, mic)
+rx_dtmf_buf = ''
 
 
 # sketch functions
@@ -46,24 +47,17 @@ def char2code(c):
         code = 0xF
     elif (c=='*'):
         code = 0xE
-    elif (c >= 'A' and c <= 'D'):
-        code = c - 'A' + 0xA
-    elif (c >= '0' and c <= '9'):
-        code = c - '0'
+    elif (c >= '0' and c <= 'D'):
+        code = int(c, 16) 
     else:
         # invalid code, skip it
         code = 255
     return code
 
+codes = ['0', '1','2','3','4','5','6','7','8','9','A', 'B','C','D','*','#']
 def code2char(code):
-    if (code < 10):
-        c = '0' + code
-    elif (code < 0xE):
-        c = 'A' + code - 10
-    elif (code == 0xE):
-        c = '*'
-    elif (code == 0xF):
-        c = '#'
+    if (code < len(codes)):
+        c = codes[code]
     else:
         c = '?' # invalid code
     return c
@@ -87,14 +81,17 @@ class StdinParser(threading.Thread):
                 bufferLock.acquire()
                 if inputBuffer == False:
                     running = False
+                    break
                 else:
                     inputBuffer += instruction
                 bufferLock.release()
             except EOFError, KeyboardInterrupt:
                 running = False
+                break
 
 
 def inputAvailable():
+    global inputBuffer, bufferLock
     ret = False
     bufferLock.acquire()
     if len(inputBuffer)>0:
@@ -103,16 +100,17 @@ def inputAvailable():
     return ret
     
 def inputReadChar():
+    global inputBuffer, bufferLock
     c = ''
     bufferLock.acquire()
     if len(inputBuffer)>0:
         c = inputBuffer[0]
         inputBuffer = inputBuffer[1:]
-        ret = True
     bufferLock.release()
     return c
     
 def inputFlush():
+    global inputBuffer, bufferLock
     bufferLock.acquire()
     inputBuffer = ''
     bufferLock.release()
@@ -138,6 +136,8 @@ def setup():
     #wiringpi.delay(5) # wait for device to come up
       
     print("beginning radio setup")
+    # initialize device
+    radio.initialize()
 
     # verify connection
     print("Testing device connections...")
@@ -145,10 +145,6 @@ def setup():
         print("HamShield connection successful")
     else:
         print("HamShield connection failed")
-
-
-    # initialize device
-    radio.initialize()
 
     print("setting default Radio configuration")
 
@@ -190,6 +186,7 @@ def setup():
 # repeating loop
 
 def loop():
+    global rx_dtmf_buf
     # look for tone
     if (radio.getDTMFSample() != 0):
         code = radio.getDTMFCode()
@@ -204,6 +201,7 @@ def loop():
             wiringpi.delay(10)
     elif (len(rx_dtmf_buf) > 0):
         print(rx_dtmf_buf)
+        rx_dtmf_buf = ''
   
     # Is it time to send tone?
     if (inputAvailable()):
@@ -241,17 +239,19 @@ if __name__ == '__main__':
     wiringpi.wiringPiSetupGpio()
  
     inputThread=StdinParser()
+    inputThread.daemon = True
     inputThread.start()
     
     setup()
     
-    rx_dtmf_buf = ''
     
     while True:
         try:
             loop()
-        except:
+        except Exception as e:
+            print(e)
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
+            inputThread.join()
             break
