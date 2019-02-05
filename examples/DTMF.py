@@ -122,7 +122,7 @@ def inputFlush():
 
 def setup():
 
-    print("press any key to begin...")
+    print("type any character and press enter to begin...")
       
     while (not inputAvailable()):
         pass
