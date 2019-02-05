@@ -1,9 +1,5 @@
 
 
-# Warning
-
-Don't use this yet. It's completely untested. Wait till April.
-
 # Overview
 
 Raspberry Pi Software Library for HamShield. This library implements all of the basic functionality.
