@@ -29,6 +29,7 @@
 from HamShieldPy import HamShield
 import wiringpi
 import threading
+import sys, signal
 
 nCS = 0
 clk = 3
@@ -239,7 +240,13 @@ def loop():
 
 
 ###############################################
-# main
+# main and safeExit
+
+def safeExit(signum, frame):
+    radio.setModeRecieve()
+    wiringpi.delay(25)
+    sys.exit(1)
+
 if __name__ == '__main__':   
 
     wiringpi.wiringPiSetupGpio()
@@ -259,4 +266,6 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
+            radio.setModeRecive()
+            wiringpi.delay(25)
             break

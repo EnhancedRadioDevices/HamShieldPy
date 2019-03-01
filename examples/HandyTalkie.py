@@ -36,6 +36,7 @@
 from HamShieldPy import HamShield
 import wiringpi
 import threading
+import sys, signal
 
 nCS = 0
 clk = 3
@@ -44,7 +45,6 @@ mic = 1
 # create object for radio
 radio = HamShield(nCS, clk, dat, mic)
 
-SWITCH_PIN = 15 # connect a switch to RPi GPIO14 (wiringPi15)  to use PTT
 currently_tx = False
 rssi_timeout = 0
 
@@ -145,9 +145,6 @@ def setup():
         pass
     inputFlush()
 
-    wiringpi.pinMode(SWITCH_PIN, wiringpi.INPUT)
-    wiringpi.pullUpDnControl(SWITCH_PIN, wiringpi.PUD_UP)
-
     # if you're using a standard HamShield (not a Mini)
     # you have to let it out of reset
     # RESET_PIN = 21
@@ -167,7 +164,6 @@ def setup():
         print("HamShield connection failed")
 
     print("setting default Radio configuration")
-    radio.dangerMode()
 
     # set frequency
     print("changing frequency")
@@ -229,10 +225,19 @@ def loop():
         rssi_timeout = wiringpi.millis()
 
 
+#########################################
+# main and exit
+
+def safeExit(signum, frame):
+    radio.setModeReceive()
+    wiringpi.delay(25)
+    sys.exit(1)
 
 if __name__ == '__main__':
 
     wiringpi.wiringPiSetupGpio()
+ 
+    signal.signal(signal.SIGINT, safeExit)
 
     inputThread = StdinParser()
     inputThread.daemon = True
@@ -248,4 +253,7 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
+            print("setting to rx")
+            radio.setModeRecieve() # just in case we had an Exception while in TX, don't get stuck there
+            wiringpi.delay(25)
             break

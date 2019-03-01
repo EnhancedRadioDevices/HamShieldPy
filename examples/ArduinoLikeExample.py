@@ -25,6 +25,7 @@
 from HamShieldPy import HamShield
 import wiringpi
 import threading
+import sys, signal
 
 nCS = 0
 clk = 3
@@ -160,15 +161,24 @@ def inputFlush():
     bufferLock.release()
 
 #########################################
-# main
+# main and safeExit
+
+def safeExit(signum, frame):
+    radio.setModeReceive()
+    wiringpi.delay(25)
+    sys.exit(1)
+
 if __name__ == '__main__':   
 
     wiringpi.wiringPiSetupGpio()
+
  
     inputThread=StdinParser()
     inputThread.daemon = True
     inputThread.start()
     
+    signal.signal(signal.SIGINT, safeExit)
+
     setup()
     
     
