@@ -39,6 +39,7 @@ radio = HamShield(nCS, clk, dat, mic)
 rx_dtmf_buf = ''
 
 
+###############################################
 # sketch functions
 
 
@@ -63,6 +64,7 @@ def code2char(code):
     return c
 
     
+###############################################
 # StdinParser thanks to Kenkron
 #             https://github.com/Kenkron
 #creates an input buffer for stdin
@@ -118,6 +120,7 @@ def inputFlush():
     
 
                 
+###############################################
 # setup
 
 def setup():
@@ -183,6 +186,7 @@ def setup():
 
     print("ready")
 
+###############################################
 # repeating loop
 
 def loop():
@@ -234,6 +238,8 @@ def loop():
         radio.setTxSourceMic()
 
 
+###############################################
+# main
 if __name__ == '__main__':   
 
     wiringpi.wiringPiSetupGpio()
@@ -253,5 +259,4 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
-            inputThread.join()
             break

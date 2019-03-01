@@ -43,12 +43,17 @@ dat = 2
 mic = 1
 # create object for radio
 radio = HamShield(nCS, clk, dat, mic)
-rx_dtmf_buf = ''
 
+SWITCH_PIN = 15 # connect a switch to RPi GPIO14 (wiringPi15)  to use PTT
+currently_tx = False
+rssi_timeout = 0
 
 # sketch functions
 
 
+# no sketch functions for this example
+
+#########################
 # StdinParser thanks to Kenkron
 #             https://github.com/Kenkron
 # creates an input buffer for stdin
@@ -118,27 +123,30 @@ def inputParseInt():
     bufferLock.acquire()
     for char in inputBuffer:
         if char.isdigit():
-            c = char
+            c += char
+        else:
             break
     bufferLock.release()
-    return c
+    if len(c) > 0:
+        return int(c)
+    else:
+        return 0
 
+#################################
 # setup
 
-LED_PIN = 13
 RSSI_REPORT_RATE_MS = 5000
 
-PWM_PIN = A3
-REST_PIN = 2
-SWITCH_PIN = 2
-
-
 def setup():
+    global rssi_timeout, currently_tx
     print("type any character and press enter to begin...")
 
     while (not inputAvailable()):
         pass
     inputFlush()
+
+    wiringpi.pinMode(SWITCH_PIN, wiringpi.INPUT)
+    wiringpi.pullUpDnControl(SWITCH_PIN, wiringpi.PUD_UP)
 
     # if you're using a standard HamShield (not a Mini)
     # you have to let it out of reset
@@ -190,48 +198,35 @@ def setup():
 
     print("ready")
 
-    #todo LED_PIN? is this commented out or defined elswhere
-    #configure Arduino LED for
-    #wiringpi.pinMode(LED_PIN, OUTPUT);
-    #rssi_timeout = 0;
+    rssi_timeout = 0;
 
+##########################################
 # repeating loop
 
 def loop():
+    global rssi_timeout, currently_tx
 
-    if not wiringpi.digitalRead(SWITCH_PIN): #todo is switch pin defined?
-        if not currently_tx:
-            currently_tx = True
-
-            #set to transmit
-            radio.setModeTransmit()
-            print("Tx")
-            #radio.setTxSourceMic()
-            #radio.setRfPower(1)
-        elif currently_tx:
-            radio.setModeReceive()
-            currently_tx = False
-            print("Rx")
     if inputAvailable():
-        #todo note wrote peek myself
-        if inputPeek() == 'r':
-            inputReadChar()
-            wiringpi.digitalWrite(RESET_PIN, LOW) #todo pins?
-            wiringpi.delay(1000)
-            wiringpi.digitalWrite(RESET_PIN, HIGH)
-            radio.initialize() # initializes automatically for UHF 12.5kHz channel
-        else:
-            setTimeout(40) #todo not sure how to do timeout
-            freq = inputParseInt() #todo note wrote myself
-            inputFlush()
+        if inputPeek() == 't' or inputPeek() == 'T':
+            c = inputReadChar()
+            if c == 't':
+                radio.setModeReceive()
+                currently_tx = False
+                print('RX')
+            elif c == 'T':
+                radio.setModeTransmit()
+                currently_tx = True 
+                print('TX')
+        freq = inputParseInt()
+        inputFlush()
+        if freq != 0:
             radio.frequency(freq)
-            print("set frequency: ")
-            print(freq)
+            print("set frequency: " + str(freq))
 
 
-    if (not currently_tx and (time() - rssi_timout) > RSSI_REPORT_RATE_MS):
+    if (not currently_tx and (wiringpi.millis() - rssi_timeout) > RSSI_REPORT_RATE_MS):
         print(radio.readRSSI())
-        rssi_timeout = time()
+        rssi_timeout = wiringpi.millis()
 
 
 
@@ -249,9 +244,8 @@ if __name__ == '__main__':
         try:
             loop()
         except Exception as e:
-            print(e)
+            print("loop error: " + str(e))
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
-            inputThread.join()
             break

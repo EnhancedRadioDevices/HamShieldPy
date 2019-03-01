@@ -35,6 +35,7 @@ radio = HamShield(nCS, clk, dat, mic)
 rx_dtmf_buf = ''
 
 
+#########################################
 # sketch functions
 
 
@@ -42,6 +43,7 @@ rx_dtmf_buf = ''
 
 
                 
+#########################################
 # setup
 
 def setup():
@@ -95,6 +97,7 @@ def setup():
 
     print("ready")
 
+#########################################
 # repeating loop
 
 def loop():
@@ -156,6 +159,8 @@ def inputFlush():
     inputBuffer = ''
     bufferLock.release()
 
+#########################################
+# main
 if __name__ == '__main__':   
 
     wiringpi.wiringPiSetupGpio()
@@ -175,5 +180,4 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
-            inputThread.join()
             break
