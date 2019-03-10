@@ -55,4 +55,4 @@ The examples directory also includes an Arduino-like template. That example does
     
 If you're using a HamShield, you'll also want to connect the HamShield's reset line. The examples all have some commented out code in the setup function that will bring the HamShield out of reset.
 
-    RST               pin 29(wiringPi21)
+    RST               pin 16(wiringPi4)
