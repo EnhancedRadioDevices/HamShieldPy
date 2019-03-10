@@ -37,9 +37,11 @@ On your Raspberry Pi, run the following after connecting it to the internet:
 
 # Examples
 
-At the moment we just have the DTMF example. We'll be slowly porting more examples over the next few months.
+At the moment we just have the HandyTalkie and DTMF examples. We'll be slowly porting more examples over the next few months.
 
 You can find all the examples in the Examples directory. They all assume that you're using a HamShieldMini, which doesn't require a reset pin to control it. 
+
+The examples directory also includes an Arduino-like template. That example doesn't do much with the HamShield, but if you're familiar with Arduino programming then it will make getting started with HamShieldPy library easier.
 
 # Default pinout for HamShield Mini
 
