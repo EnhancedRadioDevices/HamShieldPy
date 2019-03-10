@@ -253,7 +253,7 @@ def loop():
 def safeExit(signum, frame):
     global HAMSHIELD_RST
     print("safe exit")
-    radio.setModeRecieve()
+    radio.setModeReceive()
     wiringpi.delay(25)
     if HAMSHIELD_RST:
         wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
@@ -266,6 +266,8 @@ if __name__ == '__main__':
     inputThread=StdinParser()
     inputThread.daemon = True
     inputThread.start()
+
+    signal.signal(signal.SIGINT, safeExit)
     
     setup()
     
@@ -279,7 +281,7 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
-            radio.setModeRecive()
+            radio.setModeReceive()
             wiringpi.delay(25)
             if HAMSHIELD_RST:
                 wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
