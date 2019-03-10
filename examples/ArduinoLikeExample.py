@@ -14,13 +14,19 @@
 #     python ArduinoLikeExample.py
 #
 # Default Pinout for HamShieldMini
-# HamShieldMini <-> Raspberry Pi
+# HamShieldMini <-> Raspberry Pi Header Pin Number (not wiringpi #)
 # Vin               pin 1 (3.3V)
 # GND               pin 6 (GND)
 # nCS               pin 11
 # DAT               pin 13
 # CLK               pin 15
 # MIC               pin 12
+
+# if you're using a HamShield (not Mini), also connect the rst line
+# RST               pin 16
+# Set HAMSHIELD_RST to true to use a reset pin with HamShield (not Mini)
+HAMSHIELD_RST = False
+RESET_PIN = 4
 
 from HamShieldPy import HamShield
 import wiringpi
@@ -48,18 +54,21 @@ rx_dtmf_buf = ''
 # setup
 
 def setup():
+    if HAMSHIELD_RST:
+        wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+
     print("type any character and press enter to begin...")
       
     while (not inputAvailable()):
         pass
     inputFlush()
       
-    # if you're using a standard HamShield (not a Mini)
-    # you have to let it out of reset
-    #RESET_PIN = 21
-    #wiringpi.pinMode(RESET_PIN, OUTPUT)
-    #wiringpi.digitalWrite(RESET_PIN, HIGH)
-    #wiringpi.delay(5) # wait for device to come up
+    if HAMSHIELD_RST:
+        # if you're using a standard HamShield (not a Mini)
+        # you have to let it out of reset
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.HIGH)
+        wiringpi.delay(5) # wait for device to come up
       
     print("beginning radio setup")
     # initialize device
@@ -166,6 +175,9 @@ def inputFlush():
 def safeExit(signum, frame):
     radio.setModeReceive()
     wiringpi.delay(25)
+    if HAMSHIELD_RST:
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+        wiringpi.delay(25)
     sys.exit(1)
 
 if __name__ == '__main__':   
@@ -190,4 +202,9 @@ if __name__ == '__main__':
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
+            radio.setModeReceive()
+            wiringpi.delay(25)
+            if HAMSHIELD_RST:
+                wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+                wiringpi.delay(25)
             break

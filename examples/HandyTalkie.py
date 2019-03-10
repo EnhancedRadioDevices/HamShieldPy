@@ -33,6 +33,12 @@
 # CLK               pin 15
 # MIC               pin 12
 
+# if you're using a HamShield (not Mini), also connect the rst line
+# RST               pin 16
+# Set HAMSHIELD_RST to true to use a reset pin with HamShield (not Mini)
+HAMSHIELD_RST = False
+RESET_PIN = 4
+
 from HamShieldPy import HamShield
 import wiringpi
 import threading
@@ -139,18 +145,22 @@ RSSI_REPORT_RATE_MS = 5000
 
 def setup():
     global rssi_timeout, currently_tx
+    
+    if HAMSHIELD_RST:
+        wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+        
     print("type any character and press enter to begin...")
 
     while (not inputAvailable()):
         pass
     inputFlush()
 
-    # if you're using a standard HamShield (not a Mini)
-    # you have to let it out of reset
-    # RESET_PIN = 21
-    # wiringpi.pinMode(RESET_PIN, OUTPUT)
-    # wiringpi.digitalWrite(RESET_PIN, HIGH)
-    # wiringpi.delay(5) # wait for device to come up
+    if HAMSHIELD_RST:
+        # if you're using a standard HamShield (not a Mini)
+        # you have to let it out of reset
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.HIGH)
+        wiringpi.delay(5) # wait for device to come up
 
     print("beginning radio setup")
     # initialize device
@@ -231,6 +241,9 @@ def loop():
 def safeExit(signum, frame):
     radio.setModeReceive()
     wiringpi.delay(25)
+    if HAMSHIELD_RST:
+        wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+        wiringpi.delay(25)
     sys.exit(1)
 
 if __name__ == '__main__':
@@ -256,4 +269,7 @@ if __name__ == '__main__':
             print("setting to rx")
             radio.setModeRecieve() # just in case we had an Exception while in TX, don't get stuck there
             wiringpi.delay(25)
+            if HAMSHIELD_RST:
+                wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)
+                wiringpi.delay(25)
             break

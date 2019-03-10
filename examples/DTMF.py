@@ -29,7 +29,7 @@
 # if you're using a HamShield (not Mini), also connect the rst line
 # RST               pin 16
 # Set HAMSHIELD_RST to true to use a reset pin with HamShield (not Mini)
-HAMSHIELD_RST = True
+HAMSHIELD_RST = False
 RESET_PIN = 4
 
 from HamShieldPy import HamShield
@@ -252,7 +252,6 @@ def loop():
 
 def safeExit(signum, frame):
     global HAMSHIELD_RST
-    print("safe exit")
     radio.setModeReceive()
     wiringpi.delay(25)
     if HAMSHIELD_RST:
@@ -277,7 +276,6 @@ if __name__ == '__main__':
             loop()
         except Exception as e:
             print(e)
-            print("Exception")
             bufferLock.acquire()
             inputBuffer = False
             bufferLock.release()
