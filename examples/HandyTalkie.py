@@ -248,7 +248,7 @@ def safeExit(signum, frame):
 
 if __name__ == '__main__':
 
-    wiringpi.wiringPiSetupGpio()
+    wiringpi.wiringPiSetup()
  
     signal.signal(signal.SIGINT, safeExit)
 

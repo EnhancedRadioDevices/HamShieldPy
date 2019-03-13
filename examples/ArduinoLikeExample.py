@@ -182,7 +182,7 @@ def safeExit(signum, frame):
 
 if __name__ == '__main__':   
 
-    wiringpi.wiringPiSetupGpio()
+    wiringpi.wiringPiSetup()
 
  
     inputThread=StdinParser()
