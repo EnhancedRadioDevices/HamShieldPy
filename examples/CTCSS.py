@@ -1,16 +1,26 @@
 # Hamshield
-# Example: Arduino Like Example
-# This is a simple example to demonstrate how to use HamShield
-# in an Arduino like way.
+# Example: CTCSS
+
+# THis is a simple example to demonstrate HamShield receive and trasmit
+# and transmit functionality using CTCSS. THe HamShield will have audio
+# output muted until it receives the correct sub-audible tone. It does
+# this by polling a tone detection flag on the HamShield, but it's
+# possible ot do this using interrupts if you onnect GPIOO from the
+# Hamshield to your Arduino (code for that not provided).
 #
 # This code is based very strongly off of the HamShield examples
 # for Arduino. Only minor modifications have been made to
 # allow it to work in Python for Raspberry Pi
-#
+
+# TODO (maybe problems here)
 # Connect the HamShield to your Raspberry Pi. Screw the antenna
-# into the HamShield RF jack.
+# into the HamShield RF jack. Plug a pair of headphones into the
+# hamshield. Connect the HamShield to wall power and then to your
+# computer via USB. Set the CTCSS tone that you want to use in the
+# setup() function below.
+#
 # Run this program with:
-#     python ArduinoLikeExample.py
+#     python CTCSS.py
 #
 # Default Pinout for HamShieldMini
 # HamShieldMini <-> Raspberry Pi
@@ -36,12 +46,6 @@ rx_dtmf_buf = ''
 
 
 #########################################
-# sketch functions
-
-
-# add any sketch specific functions there
-
-
 
 # StdinParser thanks to Kenkron
 #             https://github.com/Kenkron
