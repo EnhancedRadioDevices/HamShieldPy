@@ -1,28 +1,6 @@
 # Hamshield
-# Example: HandyTalkie
-# This is a simple example to demonstrate HamShield receive
-# and transmit functionality.
-# Connect the Hamshield to your Arduino. Screw the Antenna
-# into the HamShield RF jack. Plug a pair of headphones into
-# the HamShield. Connect the Arduino to wall power and then
-# to your computer via USB. After uploading this program to
-# your Arduino, open the Serial Monitor. Press the button on
-# the HamShield to begin setup. After setup is complete, type
-# your desired Tx/Rx frequency, in hertz, into the bar at the
-# top of the Serial Monitor and click the "Send" button.
-# To test with another HandyTalkie (HT), key up on your HT
-# and make sure you can hear it through the headphones
-# attached to the HamShield. Key up on the HamShield by
-# holding the button.
-#
-# This code is based very strongly off of the HandyTalkie example
-# for Arduino. Only minor modifications have been made to
-# allow it to work in Python for Raspberry Pi
-#
-# Connect the HamShield to your Raspberry Pi. Screw the antenna
-# into the HamShield RF jack.
-# Run this program with:
-#     python HandieTalkie.py
+# Example: SerialController
+# This application is used in conjunction with a computer to provide full serial controll of HamShield.
 #
 # Default Pinout for HamShieldMini
 # HamShieldMini <-> Raspberry Pi
@@ -150,7 +128,6 @@ RSSI_REPORT_RATE_MS = 5000
 
 
 def setup():
-    global rssi_timeout, currently_tx
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -187,38 +164,6 @@ def setup():
 
 
 ##########################################
-# repeating loop
-
-def loop():
-    global rssi_timeout, currently_tx
-
-    if inputAvailable():
-        input = inputPeek()
-        if input == 'X': # absorb reset command because we are already reset
-            return
-        elif input == 'F': #frequency configuration command
-            tune_freq()
-            return
-        elif input == 'P': # TX PL Tone configuration command
-            pl_tone_tx()
-            return
-        elif input == 'R': # RX PL Tone configuration command
-            pl_tone_rx()
-            return
-        elif input == 'T': # Turn on transmitter command
-            tx_on()
-            return
-        elif input == 'O': # Turn off transmitter command
-            tx_off()
-            return
-        elif input == 'A': # configure amplifier
-            amplifier()
-            return
-        elif input == 'D': # configure predeemph
-            preemph()
-            return
-        else:
-            return
 
 
 def tx_on():
@@ -315,6 +260,40 @@ def amplifier():
 
 def predeemph():
     pass
+
+# repeating loop
+
+def loop():
+
+    if inputAvailable():
+        input = inputPeek()
+        if input == 'X': # absorb reset command because we are already reset
+            return
+        elif input == 'F': #frequency configuration command
+            tune_freq()
+            return
+        elif input == 'P': # TX PL Tone configuration command
+            pl_tone_tx()
+            return
+        elif input == 'R': # RX PL Tone configuration command
+            pl_tone_rx()
+            return
+        elif input == 'T': # Turn on transmitter command
+            tx_on()
+            return
+        elif input == 'O': # Turn off transmitter command
+            tx_off()
+            return
+        elif input == 'A': # configure amplifier
+            amplifier()
+            return
+        elif input == 'D': # configure predeemph
+            preemph()
+            return
+        else:
+            return
+
+
 
 
 

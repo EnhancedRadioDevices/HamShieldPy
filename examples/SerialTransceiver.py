@@ -187,7 +187,6 @@ RSSI_REPORT_RATE_MS = 5000
 
 
 def setup():
-    global rssi_timeout, currently_tx
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -284,7 +283,7 @@ def loop():
             elif text == 70: # F - frequency
                 getValue()
                 freq = float(cmdbuff)
-                if radio.frequency(freq): #todo in original this was == True, not sure if same
+                if radio.frequency(freq):
                     print("@")
                     print(freq, DEC)
                     print(";!;")

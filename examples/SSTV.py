@@ -3,6 +3,14 @@
 # This program will transmit a test pattern. You will need
 # SSTV equipment to test the output.
 #
+# This program will transmit a test pattern. You will need
+# SSTV equipment to test the output.
+# Connect the HamShield to your Arduino. Screw the antenna
+# into  the HamShield RF jack. Connect the Arduino to wall
+# power and then to your computer via USB. After uploading
+# this program to your Arduino, open the Serial Monitor to
+# view the status of the program. Tune your SSTV to 446 MHz
+# to receive the image output.
 #
 # This code is based very strongly off of the HandyTalkie example
 # for Arduino. Only minor modifications have been made to

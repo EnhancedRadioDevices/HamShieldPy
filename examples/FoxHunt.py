@@ -4,6 +4,15 @@
 # Plays a one minute tone, then IDs at 10-13 minute intervals. Script
 # will check to see if the channel is clear before it will transmit.
 #
+# todo: Arduino -> Raspberry
+# Connect the HamShield to your Arduino. Screw the antenna
+# into the HamShield RF jack. Connect the Arduino to wall
+# power and then to your computer via USB. After uploading
+# this program to your Arduino, open the Serial Monitor to
+# monitor the status of the beacon. To test, set a HandyTalkie
+# to 438MHz. You should hear a one-minute tone followed by
+# a callsign every 10-13 minutes.
+
 # This code is based very strongly off of the HamShield examples
 # for Arduino. Only minor modifications have been made to
 # allow it to work in Python for Raspberry Pi

@@ -1,7 +1,7 @@
 # Hamshield
 # Example: CTCSS
 
-# THis is a simple example to demonstrate HamShield receive and trasmit
+# This is a simple example to demonstrate HamShield receive and trasmit
 # and transmit functionality using CTCSS. THe HamShield will have audio
 # output muted until it receives the correct sub-audible tone. It does
 # this by polling a tone detection flag on the HamShield, but it's
@@ -12,7 +12,6 @@
 # for Arduino. Only minor modifications have been made to
 # allow it to work in Python for Raspberry Pi
 
-# TODO (maybe problems here)
 # Connect the HamShield to your Raspberry Pi. Screw the antenna
 # into the HamShield RF jack. Plug a pair of headphones into the
 # hamshield. Connect the HamShield to wall power and then to your
@@ -131,7 +130,7 @@ def inputParseInt():
 # setup
 
 def setup():
-    global rssi_timeout, currently_tx
+
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -206,7 +205,7 @@ def loop():
                 print("no tone")
 
     # handle manual transmit
-    if not digitalread(): #############
+    if not wiringpi.digitalread():
         if not currently_tx:
             currently_tx = True
 
@@ -226,7 +225,7 @@ def loop():
 
     # handle serial commands
     #todo note --- I copied this from HandieTalkie.py because the code in this spot in handytalkie.ino matched the code
-    # in ctcss.ino. It doesn't quite make sense to me why it is this and not the commented out code.
+    # in ctcss.ino. A more direct copy is commented out below
     if inputAvailable():
         if inputPeek() == 't' or inputPeek() == 'T':
             c = inputReadChar()
@@ -243,7 +242,7 @@ def loop():
         if freq != 0:
             radio.frequency(freq)
             print("set frequency: " + str(freq))
-
+"""
     if inputAvailable():
         if inputPeek() == 'r':
             c = inputReadChar()
@@ -256,7 +255,7 @@ def loop():
                 radio.frequency(freq)
                 print("set frequency: " + str(freq))
 
-
+"""
     if (not currently_tx and (wiringpi.millis() - rssi_timeout) > RSSI_REPORT_RATE_MS):
         print(radio.readRSSI())
         rssi_timeout = wiringpi.millis()

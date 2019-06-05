@@ -1,19 +1,18 @@
 # Hamshield
-# Example: HandyTalkie
-# This is a simple example to demonstrate HamShield receive
-# and transmit functionality.
-# Connect the Hamshield to your Arduino. Screw the Antenna
-# into the HamShield RF jack. Plug a pair of headphones into
-# the HamShield. Connect the Arduino to wall power and then
-# to your computer via USB. After uploading this program to
-# your Arduino, open the Serial Monitor. Press the button on
-# the HamShield to begin setup. After setup is complete, type
-# your desired Tx/Rx frequency, in hertz, into the bar at the
-# top of the Serial Monitor and click the "Send" button.
-# To test with another HandyTalkie (HT), key up on your HT
-# and make sure you can hear it through the headphones
-# attached to the HamShield. Key up on the HamShield by
-# holding the button.
+# Example: Morse Code Transceiver
+#
+# Serial to Morse transceiver. Sends characters from the Serial
+# port over the air, and vice versa.
+#
+# Note: Only upper case letters, numbers, and a few symbols
+# are supported.
+# Supported symbols: &/+(=:?";@`-._),!$
+#
+# If you're having trouble accurately deconding, you may want to
+# tweak the min/max . and - times. You can also uncomment
+# the print debug statements that can tell you when tones
+# are being detected, how long they're detected for, and whether
+# the tones are decoded as a . or -.
 #
 # This code is based very strongly off of the HandyTalkie example
 # for Arduino. Only minor modifications have been made to
@@ -22,7 +21,7 @@
 # Connect the HamShield to your Raspberry Pi. Screw the antenna
 # into the HamShield RF jack.
 # Run this program with:
-#     python HandieTalkie.py
+#     python Morse.py
 #
 # Default Pinout for HamShieldMini
 # HamShieldMini <-> Raspberry Pi
@@ -214,7 +213,7 @@ def setup():
     bits_to_process = False
 
     radio.bypassPreDeEmph()
-f
+
 
 
 ##########################################
@@ -228,11 +227,14 @@ def loop():
         if tone_in_progress == 0:
             # start a new tone
             tone_in_progress = wiringpi.millis()
+            # print('t')
         else:
             # keep track of how long the silence is
             if space_in_progress == 0:
                 space_in_progress = wiringpi.millis()
 
+            # we wait for a bit of silence before ending the last
+            # symbol in order to smooth out the detector
             if (wiringpi.millis() - space_in_progress) > SYMBOL_END_TIME:
                 if tone_in_progress != 0:
                     # end the last tone
