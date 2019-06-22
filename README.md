@@ -58,7 +58,7 @@ If you're using a HamShield, you'll also want to connect the HamShield's reset l
     RST               pin 16(wiringPi4)
 
 ## HamShield Mini Connections
-![Connections from HamShieldMini to RPi0](https://www.dropbox.com/s/4j2zjvkxcvyp45r/IMG_20190309_143940.jpg)
+![Connections from HamShieldMini to RPi0](https://ibb.co/G7DHJRr)
 
 ## HamShield Connections
-![Connections from HamShield to RPi0](https://www.dropbox.com/s/obncixa5xoxnotp/HamShield_RPi0_Connections.jpg)
+![Connections from HamShield to RPi0](https://ibb.co/FxMZG0K)
