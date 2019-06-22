@@ -14,15 +14,15 @@ LICENSE.txt for more details.
 # Pre-Requisites
 
 * wiringPi
- - Try "sudo apt-get install wiringpi"
- - For more info, see: http://wiringpi.com/
+    - Try "sudo apt-get install wiringpi"
+    - For more info, see: http://wiringpi.com/
 
 * wiringPi python
 
     pip install wiringpi2
 
 * SWIG (this should be installed with your default Raspbian image)
- - If you don't already have SWIG, try installing it with "sudo apt-get install swig"
+    - If you don't already have SWIG, try installing it with "sudo apt-get install swig"
 
 # Setup
 
