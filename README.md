@@ -34,6 +34,9 @@ On your Raspberry Pi, run the following after connecting it to the internet:
     git clone https://github.com/EnhancedRadioDevices/HamShieldPy.git
     cd HamShieldPy
     git submodule update --init
+    cd HamShieldPy/clib
+    git checkout master && git pull origin master
+    cd ../..
     sudo python setup.py install
 
 # Examples
