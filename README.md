@@ -61,4 +61,4 @@ If you're using a HamShield, you'll also want to connect the HamShield's reset l
 ![Connections from HamShieldMini to RPi0](https://i.ibb.co/31bRscP/Ham-Shield-Mini-RPi0-Connections.jpg)
 
 ## HamShield Connections
-![Connections from HamShield to RPi0](https://ibb.co/FxMZG0K)
+![Connections from HamShield to RPi0](https://i.ibb.co/h7jQpZy/Ham-Shield-RPi0-Connections.jpg)
