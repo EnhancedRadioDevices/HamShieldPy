@@ -14,8 +14,8 @@ LICENSE.txt for more details.
 # Pre-Requisites
 
 * wiringPi
-
-    http://wiringpi.com/
+** Try "sudo apt-get install wiringpi"
+** For more info, see: http://wiringpi.com/
 
 * wiringPi python
 
