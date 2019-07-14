@@ -19,7 +19,7 @@ LICENSE.txt for more details.
 
 * wiringPi python
 
-    pip install wiringpi2
+    pip install wiringpi2 wiringpi
 
 * SWIG (this should be installed with your default Raspbian image)
     - If you don't already have SWIG, try installing it with "sudo apt-get install swig"
