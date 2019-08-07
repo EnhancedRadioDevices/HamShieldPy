@@ -1,4 +1,4 @@
-
+You can purchase HamShield (as well as smaller variants or LoRa version) at http://www.enhancedradio.com/
 
 # Overview
 
