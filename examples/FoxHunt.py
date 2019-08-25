@@ -1,16 +1,30 @@
 # Hamshield
-# Example: Arduino Like Example
-# This is a simple example to demonstrate how to use HamShield
-# in an Arduino like way.
+# Example: FoxHunt
 #
+# Plays a one minute tone, then IDs at 10-13 minute intervals. Script
+# will check to see if the channel is clear before it will transmit.
+#
+# todo: Arduino -> Raspberry
+# Connect the HamShield to your Arduino. Screw the antenna
+# into the HamShield RF jack. Connect the Arduino to wall
+# power and then to your computer via USB. After uploading
+# this program to your Arduino, open the Serial Monitor to
+# monitor the status of the beacon. To test, set a HandyTalkie
+# to 438MHz. You should hear a one-minute tone followed by
+# a callsign every 10-13 minutes.
+
 # This code is based very strongly off of the HamShield examples
 # for Arduino. Only minor modifications have been made to
 # allow it to work in Python for Raspberry Pi
 #
 # Connect the HamShield to your Raspberry Pi. Screw the antenna
 # into the HamShield RF jack.
+#
+# To test, set a HandyTalkie to 438 MHz. You should hear a one minute
+# tone followed by a callsign every 10-13 minutes.
+#
 # Run this program with:
-#     python ArduinoLikeExample.py
+#     python FoxHunt.py
 #
 # Default Pinout for HamShieldMini
 # HamShieldMini <-> Raspberry Pi Header Pin Number (not wiringpi #)
@@ -31,6 +45,7 @@ from HamShieldPy import HamShield
 import wiringpi
 import threading
 import sys, signal
+import random
 
 nCS = 0
 clk = 3
@@ -79,41 +94,59 @@ def setup():
     else:
         print("HamShield connection failed")
 
-    print("setting default Radio configuration")
-
-    print("setting squelch")
-    radio.setSQHiThresh(-10)
-    radio.setSQLoThresh(-30)
-    print("sq hi: " + str(radio.getSQHiThresh()))
-    print("sq lo: " + str(radio.getSQLoThresh()))
-    radio.setSQOn()
-    # radio.setSQOff()
-
-    print("setting frequency to: ")
-    freq = 420000
-    radio.frequency(freq)
-    print(str(radio.getFrequency()) + "kHz")
-
-    # set RX volume to minimum to reduce false positives on DTMF rx
-    radio.setVolume1(6)
-    radio.setVolume2(0)
-
-    # set to receive
-    radio.setModeReceive()
-
+    # set the transmit power level (0-8)
     radio.setRfPower(0)
 
-    print("ready")
+    # set the morse code characteristics
+    radio.setMorseFreq(600)
+    radio.setMorseDotMillis(100)
+
+    # Configure the HamShield to operate on 438.000Mhz
+    radio.frequency(438000)
+
+    print("Radio configured.")
 
 
 #########################################
 # repeating loop
 
-def loop():
-    global rx_dtmf_buf
-    print("looping, but no action to perform")
-    delay(5000);
+def waitMinute(period):
+    print("Waiting for ")
+    print(period, DEC)
+    print(" minutes.")
+    wiringpi.delay(period * 60 * 1000)
 
+def loop():
+    # In milliseconds
+    TRANSMITLENGTH = 60000
+    # In minutes
+    INTERVAL = 10
+    RANDOMCHANCE = 3
+
+    # We'll wait up to 30 seconds for a a clear channel,
+    # requiring that the channel is clear for 2 seconds before we transmit
+    if radio.waitForChannel(30000,2000,-90):
+        # If we get here, the channel is clear. Let's print the RSSI as well
+        print("Signal is cleaer, RSSI: ", radio.readRSSI())
+
+        # Set the HamShield to TX
+        print("Transmitting...")
+        radio.setModeTransmit()
+
+
+        # Generate a 600Hz tone for TRANSMITLENGTH time
+        wiringpi.tone(MIC_PIN, 700, TRANSMITLENGTH) ###TODO replacement for "tone" function??
+        wiringpi.delay(TRANSMITLENGTH)
+
+        # Identify the transmitter
+        radio.morseOut(" CALLSIGN FOXHUNT")
+
+        # Set the HamShield back to RX
+        radio.setModeReceive()
+        print("Done.")
+
+        # Wait for INTERVAL + some random minutes before transmitting again
+        waitMinute(INTERVAL + random.randint(0, RANDOMCHANCE + 1))
 
 # StdinParser thanks to Kenkron
 #             https://github.com/Kenkron
