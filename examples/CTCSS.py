@@ -37,6 +37,7 @@ import sys, signal
 
 HAMSHIELD_RST = False
 RSSI_REPORT_RATE_MS = 5000
+muted = False
 
 nCS = 0
 clk = 3
@@ -135,7 +136,7 @@ def inputParseInt():
 # setup
 
 def setup():
-    global currently_tx
+    global currently_tx, muted
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -169,7 +170,7 @@ def setup():
     #set frequency
     print("changing frequency")
     radio.setSQOff()
-    freq = 446000
+    freq = 432100
     radio.frequency(freq)
 
     # set to receive
@@ -196,7 +197,7 @@ def setup():
 # repeating loop
 
 def loop():
-    global currently_tx, rssi_timeout
+    global muted, currently_tx, rssi_timeout
 
     # handle CTCSS tone detection
     if not currently_tx:

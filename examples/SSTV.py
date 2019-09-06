@@ -36,7 +36,7 @@
 HAMSHIELD_RST = False
 RESET_PIN = 4
 
-from HamShieldPy import HamShield
+from HamShieldPy import HamShield, MARTIN1
 import wiringpi
 import threading
 import sys, signal
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             inputBuffer = False
             bufferLock.release()
             print("setting to rx")
-            radio.setModeRecieve()  # just in case we had an Exception while in TX, don't get stuck there
+            radio.setModeReceive()  # just in case we had an Exception while in TX, don't get stuck there
             wiringpi.delay(25)
             if HAMSHIELD_RST:
                 wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)

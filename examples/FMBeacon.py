@@ -137,7 +137,7 @@ def setup():
     radio.setMorseDotMillis(100)
 
     # Configure the HamShield to operate on 438.000MHz
-    radio.frequency(438000)
+    radio.frequency(432300)
 
     print("Radio Configured.")
 
