@@ -203,7 +203,7 @@ def setup():
     radio.lookForTone(MORSE_FREQ)
 
     # Configure the HamShield to operate on 438.000MHz
-    radio.frequency(438000)
+    radio.frequency(432100)
     radio.setModeReceive()
     print("Radio configured")
     last_tone_check = wiringpi.millis()
@@ -259,33 +259,33 @@ def loop():
                 rx_morse_char = 0
                 rx_morse_bit = 1
 
-        # should we send anything
-        if inputAvailable():
-            print("checking channel")
-            # We'll wait up to 30 seconds for a clear channel,
-            # requiring that the channel is clear for 2 seconds before we transmit
-            if radio.waitForChannel(30000, 2000, -5):
-                # If we get here, the channel is clear.
+    # should we send anything
+    if inputAvailable():
+        print("checking channel")
+        # We'll wait up to 30 seconds for a clear channel,
+        # requiring that the channel is clear for 2 seconds before we transmit
+        if radio.waitForChannel(30000, 2000, -5):
+            # If we get here, the channel is clear.
 
-                # Start transmitting by putting the radio into transmit mode.
-                radio.setModeTransmit()
-                MORSE_BUF_SIZE = 128
-                morse_buf = [' '] # start with space to let PA come up
-                while inputAvailable() and len(morse_buf) < MORSE_BUF_SIZE:
-                    morse_buf.append(inputReadChar())
-                morse_buf.append(None)
+            # Start transmitting by putting the radio into transmit mode.
+            radio.setModeTransmit()
+            MORSE_BUF_SIZE = 128
+            morse_buf = " " # start with space to let PA come up
+            while inputAvailable() and len(morse_buf) < MORSE_BUF_SIZE:
+                morse_buf = morse_buf + inputReadChar()
+            morse_buf = morse_buf + '\0'
 
-                # Send a message out in morse code
-                radio.morseOut(''.join(morse_buf))
+            # Send a message out in morse code
+            radio.morseOut(morse_buf)
 
-                # We're done sending the message, set the radio back into recieve mode.
-                radio.setModeReceive()
-                radio.lookForTone(MORSE_FREQ)
-                print("sent")
-            else:
-                # If we get here, the channel is busy. Let's also print out the RSSI.
-                print("The channel was busy. RSSI: ")
-                print(radio.readRSSI())
+            # We're done sending the message, set the radio back into recieve mode.
+            radio.setModeReceive()
+            radio.lookForTone(MORSE_FREQ)
+            print("sent")
+        else:
+            # If we get here, the channel is busy. Let's also print out the RSSI.
+            print("The channel was busy. RSSI: ")
+            print(radio.readRSSI())
 
 def handleTone(tone_time):
     #print(tone_time)
@@ -348,7 +348,7 @@ if __name__ == '__main__':
             inputBuffer = False
             bufferLock.release()
             print("setting to rx")
-            radio.setModeRecieve()  # just in case we had an Exception while in TX, don't get stuck there
+            radio.setModeReceive()  # just in case we had an Exception while in TX, don't get stuck there
             wiringpi.delay(25)
             if HAMSHIELD_RST:
                 wiringpi.digitalWrite(RESET_PIN, wiringpi.LOW)

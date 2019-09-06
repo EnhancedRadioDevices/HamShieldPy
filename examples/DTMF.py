@@ -169,7 +169,7 @@ def setup():
     #radio.setSQOff()
 
     print("setting frequency to: ")
-    freq = 420000
+    freq = 432100
     radio.frequency(freq)
     print(str(radio.getFrequency()) + "kHz")
       
