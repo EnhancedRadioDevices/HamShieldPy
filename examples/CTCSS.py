@@ -35,6 +35,9 @@ import wiringpi
 import threading
 import sys, signal
 
+HAMSHIELD_RST = False
+RSSI_REPORT_RATE_MS = 5000
+
 nCS = 0
 clk = 3
 dat = 2
@@ -42,6 +45,8 @@ mic = 1
 # create object for radio
 radio = HamShield(nCS, clk, dat, mic)
 rx_dtmf_buf = ''
+currently_tx = False
+rssi_timeout = 0
 
 
 #########################################
@@ -130,7 +135,7 @@ def inputParseInt():
 # setup
 
 def setup():
-
+    global currently_tx
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -170,7 +175,7 @@ def setup():
     # set to receive
     radio.setModeReceive
     currently_tx = False
-    print("config register i: ")
+    print("config register is: ")
     print(radio.readCtlReg())
     print(radio.readRSSI())
 
@@ -191,6 +196,8 @@ def setup():
 # repeating loop
 
 def loop():
+    global currently_tx, rssi_timeout
+
     # handle CTCSS tone detection
     if not currently_tx:
         # check for CTCSS tone
@@ -204,28 +211,7 @@ def loop():
                 radio.setMute()
                 print("no tone")
 
-    # handle manual transmit
-    if not wiringpi.digitalread():
-        if not currently_tx:
-            currently_tx = True
-
-            # set to transmit
-            radio.setModeTransmit()
-            print("Tx")
-
-            radio.setUnmute() # can't mute during transmit
-            muted = False
-    elif currently_tx:
-        radio.setModeReceive()
-        currently_tx = False
-        print("Rx")
-
-        radio.setMute() # default to mute during rx
-        muted = True
-
     # handle serial commands
-    #todo note --- I copied this from HandieTalkie.py because the code in this spot in handytalkie.ino matched the code
-    # in ctcss.ino. A more direct copy is commented out below
     if inputAvailable():
         if inputPeek() == 't' or inputPeek() == 'T':
             c = inputReadChar()
@@ -242,20 +228,7 @@ def loop():
         if freq != 0:
             radio.frequency(freq)
             print("set frequency: " + str(freq))
-"""
-    if inputAvailable():
-        if inputPeek() == 'r':
-            c = inputReadChar()
-            wiringpi.delay(1000)
-            radio.initialize()
-        else:
-            freq = inputParseInt()
-            inputFlush()
-            if freq != 0:
-                radio.frequency(freq)
-                print("set frequency: " + str(freq))
 
-"""
     if (not currently_tx and (wiringpi.millis() - rssi_timeout) > RSSI_REPORT_RATE_MS):
         print(radio.readRSSI())
         rssi_timeout = wiringpi.millis()

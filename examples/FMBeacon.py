@@ -134,7 +134,7 @@ def setup():
 
     # Set the morse code characteristics
     radio.setMorseFreq(600)
-    radio.setMOrseDotMillis(100)
+    radio.setMorseDotMillis(100)
 
     # Configure the HamShield to operate on 438.000MHz
     radio.frequency(438000)
