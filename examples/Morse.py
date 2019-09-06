@@ -160,6 +160,7 @@ def inputParseInt():
 # setup
 
 RSSI_REPORT_RATE_MS = 5000
+tone_in_progress = 0
 
 
 def setup():

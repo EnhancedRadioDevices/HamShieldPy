@@ -20,7 +20,7 @@
 # Connect the HamShield to your Raspberry Pi. Screw the antenna
 # into the HamShield RF jack.
 #
-# To test, set a HandyTalkie to 438 MHz. You should hear a one minute
+# To test, set a HandyTalkie to 432.4 MHz. You should hear a one minute
 # tone followed by a callsign every 10-13 minutes.
 #
 # Run this program with:
@@ -102,7 +102,7 @@ def setup():
     radio.setMorseDotMillis(100)
 
     # Configure the HamShield to operate on 438.000Mhz
-    radio.frequency(438000)
+    radio.frequency(432400)
 
     print("Radio configured.")
 
@@ -111,14 +111,12 @@ def setup():
 # repeating loop
 
 def waitMinute(period):
-    print("Waiting for ")
-    print(period, DEC)
-    print(" minutes.")
+    print("Waiting for " + str(period) + " minutes.")
     wiringpi.delay(period * 60 * 1000)
 
 def loop():
     # In milliseconds
-    TRANSMITLENGTH = 60000
+    TRANSMITLENGTH = 600
     # In minutes
     INTERVAL = 10
     RANDOMCHANCE = 3
@@ -127,7 +125,7 @@ def loop():
     # requiring that the channel is clear for 2 seconds before we transmit
     if radio.waitForChannel(30000,2000,-90):
         # If we get here, the channel is clear. Let's print the RSSI as well
-        print("Signal is cleaer, RSSI: ", radio.readRSSI())
+        print("Signal is clear, RSSI: ", radio.readRSSI())
 
         # Set the HamShield to TX
         print("Transmitting...")
@@ -135,8 +133,9 @@ def loop():
 
 
         # Generate a 600Hz tone for TRANSMITLENGTH time
-        wiringpi.tone(MIC_PIN, 700, TRANSMITLENGTH) ###TODO replacement for "tone" function??
+        radio.HStone(mic, 700)
         wiringpi.delay(TRANSMITLENGTH)
+        radio.HSnoTone(mic)
 
         # Identify the transmitter
         radio.morseOut(" CALLSIGN FOXHUNT")
