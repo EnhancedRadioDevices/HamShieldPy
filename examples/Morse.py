@@ -161,10 +161,12 @@ def inputParseInt():
 
 RSSI_REPORT_RATE_MS = 5000
 tone_in_progress = 0
+rx_morse_bit = 0
+rx_morse_char = 0
 
 
 def setup():
-    global rs_morse_bit, rs_morse_char, space_in_progress, tone_in_progress
+    global rx_morse_bit, rx_morse_char, space_in_progress, tone_in_progress
 
     if HAMSHIELD_RST:
         wiringpi.pinMode(RESET_PIN, wiringpi.OUTPUT)
@@ -221,44 +223,9 @@ def setup():
 # repeating loop
 
 def loop():
-    # are we receiving anything
-    rx_msg = []
-    if radio.toneDetected():
-        space_in_progress = 0
-        if tone_in_progress == 0:
-            # start a new tone
-            tone_in_progress = wiringpi.millis()
-            # print('t')
-        else:
-            # keep track of how long the silence is
-            if space_in_progress == 0:
-                space_in_progress = wiringpi.millis()
-
-            # we wait for a bit of silence before ending the last
-            # symbol in order to smooth out the detector
-            if (wiringpi.millis() - space_in_progress) > SYMBOL_END_TIME:
-                if tone_in_progress != 0:
-                    # end the last tone
-                    tone_time = wiringpi.millis() - tone_in_progress
-                    tone_in_progress = 0
-                    handleTone(tone_time)
-            # we might be done with a character if the space is long enough
-            if ((wiringpi.millis() - space_in_progress) > CHAR_END_TIME) and bits_to_process:
-                m = parseMorse()
-                bits_to_process = False
-                if m != 0:
-
-                    rx_msg.append(m)
-
-            # we might be done with a message if the space is long enough
-            if (wiringpi.millis() - space_in_progress) > MESSAGE_END_TIME:
-                if len(rx_msg) > 0:
-                    # we got a message, print it now
-                    rx_msg.append(None) # null terminate
-                    print(''.join(rx_msg))
-                    rx_msg = []
-                rx_morse_char = 0
-                rx_morse_bit = 1
+    rx_char = radio.morseRxLoop()
+    if (rx_char != '\0'):
+        print(rx_char)
 
     # should we send anything
     if inputAvailable():
@@ -299,7 +266,7 @@ def handleTone(tone_time):
         # add a dash
         # print("-")
         bits_to_process = True
-        rs_morse_char += rx_morse_bit
+        rx_morse_char += rx_morse_bit
 
     #prep for the next bit
     rx_morse_bit = rx_morse_bit <<1
